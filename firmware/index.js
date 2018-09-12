@@ -133,12 +133,13 @@ function sendData(sdata) {
     }
   };
     
-  var req = http.request(options, function(res) {});
+  var req = http.request(options, function(res) {
+    req.end();
+  });
   
   req.on('error', function(e) {
     console.log('Problem with request: ' + e.message);
   });
-  
+         
   req.write(payload);  
-  req.end();
 }
