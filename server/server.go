@@ -14,8 +14,7 @@ func main() {
   app.Setup()
 
   r := mux.NewRouter()
-  r.HandleFunc("/log", app.LogHandler).
-    Methods("POST")
+  r.HandleFunc("/log", app.LogHandler).Methods("POST")
   r.Use(httpauth.SimpleBasicAuth(app.Config.Auth.Username, app.Config.Auth.Password))
 
   http.Handle("/", r)

@@ -10,9 +10,6 @@ import (
 )
 
 func (s *Server) LogHandler(w http.ResponseWriter, r *http.Request) {
-  log.Println(r)
-  log.Println(r.Body)
-
   decoder := json.NewDecoder(r.Body)
   var t types.Datapoint
 
@@ -22,8 +19,6 @@ func (s *Server) LogHandler(w http.ResponseWriter, r *http.Request) {
   }
 
   t.Timestamp = time.Now().UTC()
-
   log.Println(t)
-
   t.Insert(s.DB)
 }
