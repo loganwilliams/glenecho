@@ -1,0 +1,45 @@
+# docker-compose config
+
+version: '2'
+services:
+  database:
+    env_file: .env
+    ports:
+      - "5432:5432"
+    build:
+      context: ./database/
+    image: postgres
+    volumes:
+      - data-postgres:/var/lib/postgresql/data
+    restart: always
+
+  server:
+    env_file: .env
+    build:
+      context: ./server/
+    volumes:
+      - ./server:/go/src/github.com/loganwilliams/glenecho/server
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    links:
+      - "database:${DBHOST}"
+
+  # client:
+  #   env_file: .env
+  #   build:
+  #     context: ./client/
+  #   volumes:
+  #     - ./client:/client/
+  #     - node-modules:/client/node_modules
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - server
+  #   links:
+  #     - "server:server"
+
+volumes:
+  data-postgres:
+  node-modules:
