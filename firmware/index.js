@@ -1,14 +1,18 @@
-var WIFI_NAME = "";
-var WIFI_OPTIONS = { password : "" };
+var WIFI_NAME = "Cnc(N) Idea Factory";
+var WIFI_OPTIONS = { password : "happyhome" };
 
 var wifi = require("Wifi");
 
 var i2c = new I2C();
 i2c.setup({sda:A6,scl:A7});
 var bme = require("BME680").connectI2C(i2c);
-var ow = new OneWire(B0);
-var sensor = require("DS18B20").connect(ow);
+
+// var ow = new OneWire(B0);
+// var sensor = require("DS18B20").connect(ow);
+
 var http = require('http');
+
+console.log(bme.get_sensor_data());
 
 wifi.connect(WIFI_NAME, WIFI_OPTIONS, function(err) {
   if (err) {
@@ -21,12 +25,21 @@ wifi.connect(WIFI_NAME, WIFI_OPTIONS, function(err) {
 });
 
 function startLogging() {
+  log();
+  
   setInterval(function() {
     logBME680();
-    logDS18B20();
-    logTSD10();
+    //logDS18B20();
+    //logTSD10();
     logAudio();
-  }, 5000);
+  }, 60000);
+}
+
+function log() {
+  logBME680();
+  //logDS18B20();
+  //logTSD10();
+  logAudio();
 }
 
 function logBME680() {
@@ -101,21 +114,21 @@ function logAudio() {
   
   var audio_sampler = setInterval(function() {
     var raw = analogRead(A0);
-    var v = Math.abs(raw - 0.5);
+    var v = Math.pow(raw - 0.5, 2);
     audio += v;
     n_audio += 1;    
-  }, 5);
+  }, 1);
     
   setTimeout(function() {
     clearInterval(audio_sampler);
-    var avg_audio = audio / n_audio;
+    var avg_audio = Math.sqrt(audio / n_audio);
     var sdata = {'sensor': 'max4466',
                  'site': 0,
                  'measurement': 'max_volume',
                  'value': avg_audio};
     
     sendData(sdata);
-  }, 990);
+  }, 5000);
 }
 
 
