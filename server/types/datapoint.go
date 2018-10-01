@@ -16,7 +16,8 @@ type Datapoint struct {
 }
 
 var (
-  createStmt *sql.Stmt
+  createStmt           *sql.Stmt
+  recentDatapointsStmt *sql.Stmt
 )
 
 func CreateAndPopulateDatapointsTable(db *sql.DB) error {
@@ -73,4 +74,58 @@ func (dp *Datapoint) Insert(db *sql.DB) error {
   }
 
   return err
+}
+
+func RecentDatapoints(db *sql.DB) ([]*Datapoint, error) {
+  var (
+    datapoints []*Datapoint = []*Datapoint{}
+    err        error
+  )
+
+  if recentDatapointsStmt == nil {
+    stmt := `SELECT * FROM datapoints WHERE timestamp > $1 ORDER BY timestamp DESC`
+
+    recentDatapointsStmt, err = db.Prepare(stmt)
+    if err != nil {
+      return datapoints, err
+    }
+  }
+
+  rows, err := recentDatapointsStmt.Query(time.Now().Add(-24 * time.Hour))
+
+  if err != nil {
+    return datapoints, err
+  }
+
+  defer rows.Close()
+
+  return scanRows(rows)
+}
+
+func scanRows(rows *sql.Rows) ([]*Datapoint, error) {
+  var datapoints []*Datapoint = []*Datapoint{}
+
+  for rows.Next() {
+    datapoint := &Datapoint{}
+
+    err := rows.Scan(
+      &datapoint.Id,
+      &datapoint.Timestamp,
+      &datapoint.Site,
+      &datapoint.Sensor,
+      &datapoint.Measurement,
+      &datapoint.Value)
+
+    if err != nil {
+      return datapoints, err
+    }
+
+    datapoints = append(datapoints, datapoint)
+  }
+
+  if err := rows.Err(); err != nil {
+    return datapoints, err
+  }
+
+  return datapoints, nil
 }
