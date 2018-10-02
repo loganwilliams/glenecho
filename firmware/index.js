@@ -1,4 +1,6 @@
-var WIFI_NAME = "Cnc(N) Idea Factory";
+function start(){
+  
+var WIFI_NAME = "CnC(N) Idea Factory";
 var WIFI_OPTIONS = { password : "happyhome" };
 
 var wifi = require("Wifi");
@@ -7,12 +9,10 @@ var i2c = new I2C();
 i2c.setup({sda:A6,scl:A7});
 var bme = require("BME680").connectI2C(i2c);
 
-// var ow = new OneWire(B0);
-// var sensor = require("DS18B20").connect(ow);
+//var ow = new OneWire(B0);
+//var sensor = require("DS18B20").connect(ow);
 
 var http = require('http');
-
-console.log(bme.get_sensor_data());
 
 wifi.connect(WIFI_NAME, WIFI_OPTIONS, function(err) {
   if (err) {
@@ -23,24 +23,31 @@ wifi.connect(WIFI_NAME, WIFI_OPTIONS, function(err) {
   
   startLogging();
 });
-
-function startLogging() {
-  log();
   
+var count = 0;
+
+function startLogging() {  
   setInterval(function() {
-    logBME680();
-    //logDS18B20();
-    //logTSD10();
-    logAudio();
+    log();
+    count++;
+    
+    if (count > 60*6) {
+      E.reboot();
+    }
   }, 60000);
+  
+  //setDeepSleep(1);
 }
 
 function log() {
   logBME680();
-  //logDS18B20();
-  //logTSD10();
-  logAudio();
+  //setTimeout(logDS18B20, 1000);
+  //setTimeout(logTSD10, 2000);
+  setTimeout(logAudio, 3000);
+  setTimeout(logDepth, 4000);
+  //setDeepSleep(1);
 }
+
 
 function logBME680() {
   var data = bme.get_sensor_data();
@@ -76,6 +83,7 @@ function logBME680() {
   bme.perform_measurement();
 }
 
+
 function logDS18B20() {
   sensor.getTemp(function (temp) {
     var sdata = {'sensor': 'ds18b20',
@@ -91,21 +99,16 @@ function logTSD10() {
   var turbidity = 0;
   var n_turbidity = 0;
   
-  var interval = setInterval(function() {
-    turbidity += analogRead(A1);
-    n_turbidity += 1;
-  }, 25);
+  for (var i = 0; i < 100; i++) {
+    turbidity += analogRead(B1)*0.01;
+  }
   
-  setTimeout(function() {
-    clearInterval(interval);
-    var f_turbidity = turbidity / n_turbidity;
-    var sdata = {'sensor': 'tsd10',
-                 'site': 0,
-                 'measurement': 'turbidity',
-                 'value': f_turbidity};
+  var sdata = {'sensor': 'tsd10',
+               'site': 0,
+               'measurement': 'turbidity',
+               'value': turbidity};
     
-    sendData(sdata);
-  }, 990);     
+  sendData(sdata);
 }
 
 function logAudio() {
@@ -130,12 +133,27 @@ function logAudio() {
     sendData(sdata);
   }, 5000);
 }
-
-
+  
+function logDepth() {
+  var v = 0;
+  for (var i = 0; i < 100; i++) {
+    v += analogRead(A1) * 0.01;
+  }
+  
+  var r = 560 * v / (1 - v);
+  var depth = 15.35 - 0.006345 * r;
+  var sdata = {'sensor': 'etape12',
+               'site': 0,
+               'measurement': 'depth',
+               'value': depth};
+  
+  sendData(sdata);
+}
+  
 function sendData(sdata) {
   var payload = JSON.stringify(sdata);
   var options = {
-    host: '192.168.1.94',
+    host: 'glenecho.stream',
     port: '8080',
     method: 'POST',
     path: '/log',
@@ -156,3 +174,7 @@ function sendData(sdata) {
          
   req.write(payload);  
 }
+
+}
+E.on("init", start);
+save();
