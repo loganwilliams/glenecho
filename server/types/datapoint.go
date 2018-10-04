@@ -83,7 +83,7 @@ func RecentDatapoints(db *sql.DB) ([]*Datapoint, error) {
   )
 
   if recentDatapointsStmt == nil {
-    stmt := `SELECT * FROM datapoints WHERE timestamp > $1 ORDER BY timestamp DESC`
+    stmt := `SELECT * FROM datapoints ORDER BY timestamp DESC`
 
     recentDatapointsStmt, err = db.Prepare(stmt)
     if err != nil {
@@ -91,7 +91,8 @@ func RecentDatapoints(db *sql.DB) ([]*Datapoint, error) {
     }
   }
 
-  rows, err := recentDatapointsStmt.Query(time.Now().Add(-24 * time.Hour))
+  rows, err := recentDatapointsStmt.Query()
+  // rows, err := recentDatapointsStmt.Query(time.Now().Add(-24 * time.Hour))
 
   if err != nil {
     return datapoints, err
