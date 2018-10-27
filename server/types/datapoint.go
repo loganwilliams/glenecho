@@ -77,13 +77,17 @@ func (dp *Datapoint) Insert(db *sql.DB) error {
 }
 
 func RecentDatapoints(db *sql.DB) ([]*Datapoint, error) {
+  return DatapointsAtTime(db, time.Now().Add(-24*time.Hour))
+}
+
+func DatapointsAtTime(db *sql.DB, day time.Time) ([]*Datapoint, error) {
   var (
     datapoints []*Datapoint = []*Datapoint{}
     err        error
   )
 
   if recentDatapointsStmt == nil {
-    stmt := `SELECT * FROM datapoints ORDER BY timestamp DESC`
+    stmt := `SELECT * FROM datapoints WHERE timestamp > $1 AND timestamp <= $2 ORDER BY timestamp DESC`
 
     recentDatapointsStmt, err = db.Prepare(stmt)
     if err != nil {
@@ -91,8 +95,7 @@ func RecentDatapoints(db *sql.DB) ([]*Datapoint, error) {
     }
   }
 
-  rows, err := recentDatapointsStmt.Query()
-  // rows, err := recentDatapointsStmt.Query(time.Now().Add(-24 * time.Hour))
+  rows, err := recentDatapointsStmt.Query(day, day.Add(24*time.Hour))
 
   if err != nil {
     return datapoints, err

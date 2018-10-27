@@ -15,7 +15,8 @@ func main() {
 
   r := mux.NewRouter()
   r.HandleFunc("/log", app.LogHandler).Methods("POST")
-  r.HandleFunc("/list", app.ListHandler).Methods("GET")
+  r.HandleFunc("/list", app.RecentListHandler).Methods("GET")
+  r.HandleFunc("/list/{date}", app.ListHandler).Methods("GET")
   r.Use(httpauth.SimpleBasicAuth(app.Config.Auth.Username, app.Config.Auth.Password))
 
   http.Handle("/", r)
