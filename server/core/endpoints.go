@@ -73,7 +73,7 @@ func setHeaders(w http.ResponseWriter) http.ResponseWriter {
   w.Header().Set("Content-Type", "text/json; charset=ascii")
   w.Header().Set("Access-Control-Allow-Origin", "*")
   w.Header().Set("Access-Control-Allow-Methods", "OPTIONS,GET,PUT,POST,DELETE")
-  w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+  w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin,Authorization, access-control-allow-headers")
 
   return w
 }
