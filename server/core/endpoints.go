@@ -1,6 +1,7 @@
 package core
 
 import (
+  "encoding/base64"
   "encoding/json"
   "fmt"
   "log"
@@ -12,7 +13,16 @@ import (
   "github.com/loganwilliams/glenecho/server/types"
 )
 
+// func (s *Server) auth(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+// }
+
 func (s *Server) LogHandler(w http.ResponseWriter, r *http.Request) {
+  auth := r.Header.Get("Authorization")
+  log.Println(auth)
+  if auth != "Basic "+base64.StdEncoding.EncodeToString([]byte(s.Config.Auth.Username+":"+s.Config.Auth.Password)) {
+    return
+  }
+
   decoder := json.NewDecoder(r.Body)
   var t types.Datapoint
 
@@ -66,10 +76,6 @@ func (s *Server) ListHandler(w http.ResponseWriter, r *http.Request) {
   }
 
   fmt.Fprintf(w, "%s", pretty.Json(string(response)))
-}
-
-func (s *Server) CORS(w http.ResponseWriter, r *http.Request) {
-  w = setHeaders(w)
 }
 
 func setHeaders(w http.ResponseWriter) http.ResponseWriter {
