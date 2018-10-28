@@ -44,6 +44,7 @@ func (s *Server) RecentListHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) ListHandler(w http.ResponseWriter, r *http.Request) {
+  w = setHeaders(w)
   vars := mux.Vars(r)
   date, err := time.Parse("2006-01-02", vars["date"])
 
@@ -71,6 +72,7 @@ func setHeaders(w http.ResponseWriter) http.ResponseWriter {
   // Send the correct headers to enable CORS
   w.Header().Set("Content-Type", "text/json; charset=ascii")
   w.Header().Set("Access-Control-Allow-Origin", "*")
+  w.Header().Set("Access-Control-Allow-Methods", "OPTIONS,GET,PUT,POST,DELETE")
   w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 
   return w
