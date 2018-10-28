@@ -71,9 +71,10 @@ func (s *Server) ListHandler(w http.ResponseWriter, r *http.Request) {
 func setHeaders(w http.ResponseWriter) http.ResponseWriter {
   // Send the correct headers to enable CORS
   w.Header().Set("Content-Type", "text/json; charset=ascii")
-  w.Header().Set("Access-Control-Allow-Origin", "*")
+  w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000, http://glenecho.stream")
   w.Header().Set("Access-Control-Allow-Methods", "OPTIONS,GET,PUT,POST,DELETE")
   w.Header().Set("Access-Control-Allow-Headers", "*")
+  w.Header().Set("Access-Control-Allow-Credentials", "true")
 
   return w
 }
