@@ -17,6 +17,7 @@ func main() {
   r.HandleFunc("/log", app.LogHandler).Methods("POST")
   r.HandleFunc("/list", app.RecentListHandler).Methods("GET")
   r.HandleFunc("/list/{date}", app.ListHandler).Methods("GET")
+  r.HandleFunc("*", app.CORS).Methods("OPTIONS")
   r.Use(httpauth.SimpleBasicAuth(app.Config.Auth.Username, app.Config.Auth.Password))
 
   http.Handle("/", r)

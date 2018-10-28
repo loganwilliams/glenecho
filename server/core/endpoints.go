@@ -68,6 +68,10 @@ func (s *Server) ListHandler(w http.ResponseWriter, r *http.Request) {
   fmt.Fprintf(w, "%s", pretty.Json(string(response)))
 }
 
+func (s *Server) CORS(w http.ResponseWriter, r *http.Request) {
+  w = setHeaders(w)
+}
+
 func setHeaders(w http.ResponseWriter) http.ResponseWriter {
   // Send the correct headers to enable CORS
   w.Header().Set("Content-Type", "text/json; charset=ascii")
