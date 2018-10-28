@@ -26,19 +26,19 @@ services:
     links:
       - "database:${DBHOST}"
 
-  # client:
-  #   env_file: .env
-  #   build:
-  #     context: ./client/
-  #   volumes:
-  #     - ./client:/client/
-  #     - node-modules:/client/node_modules
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     - server
-  #   links:
-  #     - "server:server"
+  client:
+    env_file: .env
+    build:
+      context: ./client/
+    volumes:
+      - ./client:/client/
+      - node-modules:/client/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+    links:
+      - "server:server"
 
 volumes:
   data-postgres:
