@@ -2,11 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import moment from 'moment';
-import ReactChartkick, { LineChart, PieChart } from 'react-chartkick'
-import Chart from 'chart.js'
 import * as d3 from 'd3';
-
-ReactChartkick.addAdapter(Chart)
 
 class DisplayTime extends Component {
   render() {
