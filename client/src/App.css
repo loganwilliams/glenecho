@@ -47,3 +47,12 @@ h1 {
   font-size: 64px;
   text-align: center;
 }
+
+.line {
+  stroke-width: 2;
+  stroke: #51ffff;
+}
+
+.chart {
+  margin-left: -35px;
+}

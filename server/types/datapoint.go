@@ -77,7 +77,7 @@ func (dp *Datapoint) Insert(db *sql.DB) error {
 }
 
 func RecentDatapoints(db *sql.DB) ([]*Datapoint, error) {
-  return DatapointsAtTime(db, time.Now().Add(-24*time.Hour))
+  return DatapointsAtTime(db, time.Now().Add(-72*time.Hour))
 }
 
 func DatapointsAtTime(db *sql.DB, day time.Time) ([]*Datapoint, error) {
@@ -95,7 +95,7 @@ func DatapointsAtTime(db *sql.DB, day time.Time) ([]*Datapoint, error) {
     }
   }
 
-  rows, err := recentDatapointsStmt.Query(day, day.Add(24*time.Hour))
+  rows, err := recentDatapointsStmt.Query(day, day.Add(72*time.Hour))
 
   if err != nil {
     return datapoints, err
