@@ -35,6 +35,7 @@ body {
 
 .latest div:last-child {
   margin-bottom: 1em;
+  height: 100px;
 }
 
 /*.number:nth-child(1), .number:nth-child(3), .number:nth-child(5), .number:nth-child(7) {
@@ -64,8 +65,9 @@ body {
 .value span {
   background-color: black;
   /*height: 100%;*/
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding-top: 12px;
+  margin-bottom: 10px;
+  padding-bottom: 2px;
   padding-right: 16px;
 }
 
@@ -95,7 +97,10 @@ h1 {
 }
 
 .number svg {
-  width: 700px;
+  width: 800px;
   position: absolute;
   right: 2em;
+  align-self: right;
+  text-align: right;
+  display: block;
 }

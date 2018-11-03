@@ -23,8 +23,9 @@ class Graph extends Component {
     let min = this.props.min || d3.min(data.map(x => x[1]));
     let max = this.props.max || d3.max(data.map(x => x[1]));
 
-    let xscale = d3.scaleLinear()
-      .domain([d3.min(data.map(x => x[0])), d3.max(data.map(x => x[0]))])
+    console.log(this.props.domain);
+    let xscale = d3.scaleTime()
+      .domain(this.props.domain)
       .range([0, width-43]);
 
     let yscale = d3.scaleLinear()
@@ -36,7 +37,8 @@ class Graph extends Component {
       .y(d => yscale(d[1]))
       .curve(d3.curveLinear);
 
-    let svg = d3.select(this.node);
+    let svg = d3.select(this.node).append("g")
+      .attr("transform", "translate(100,0)");
 
     svg.append("path")
       .datum(data)
@@ -47,6 +49,13 @@ class Graph extends Component {
       .attr("transform", "translate(" + (width-35) + ", 0)")
       .attr("class", "yaxis")
       .call(d3.axisRight(yscale).ticks(2)); // Create an axis component with d3.axisLeft
+
+    if (this.props.xaxis) {
+      svg.append("g")
+        .attr("transform", "translate(0," + (height+8) + ")")
+        .attr("cass", "xaxis")
+        .call(d3.axisBottom(xscale).ticks(8));
+    }
   }
 
     componentDidMount() {
@@ -54,7 +63,7 @@ class Graph extends Component {
   }
 
   render() {
-    return <svg width={this.props.width} height={this.props.height} className="chart" ref={n => this.node = n}></svg>
+    return <svg width={this.props.width} height={this.props.height + (this.props.xaxis ? 25 : 0)} className="chart" ref={n => this.node = n}></svg>
   }
 }
 
@@ -72,6 +81,9 @@ class Display extends Component {
         return (f.measurement === this.props.measurement)
       }
     });
+
+    console.log(this.props.data)
+    let domain = [d3.min(this.props.data.map(x => new Date(x.timestamp))), d3.max(this.props.data.map(x => new Date(x.timestamp)))]
 
     let units = this.props.units;
 
@@ -125,7 +137,7 @@ class Display extends Component {
     return <div className={"number" + (this.props.disabled ? " disabled" : "")}>
       <div className="title">{this.props.text}</div>
       <div className="value"><span>{latest + units}</span></div>
-      <Graph data={chartData} height={75} width={700} max={this.props.max} min={this.props.min} flip={this.props.flip} />
+      <Graph data={chartData} height={75} width={700} max={this.props.max} min={this.props.min} xaxis={this.props.xaxis} domain={domain}/>
       {/* <LineChart data={chartData} min={this.props.min || 0} max={this.props.max} colors={["#fff", "#fff", "#fff"]} points={false} height="200px"/> */}
     </div>
   }
@@ -208,6 +220,7 @@ class App extends Component {
                 measurement="max_volume"
                 text="Ambient volume"
                 units="%%"
+                xaxis={true}
               />
             </div>
           </main>
