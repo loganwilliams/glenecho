@@ -25,7 +25,7 @@ class Graph extends Component {
 
     let xscale = d3.scaleLinear()
       .domain([d3.min(data.map(x => x[0])), d3.max(data.map(x => x[0]))])
-      .range([35, width]);
+      .range([0, width-43]);
 
     let yscale = d3.scaleLinear()
       .domain([min, max])
@@ -44,9 +44,9 @@ class Graph extends Component {
       .attr("d", line);
 
     svg.append("g")
-      .attr("transform", "translate(35, 0)")
+      .attr("transform", "translate(" + (width-35) + ", 0)")
       .attr("class", "yaxis")
-      .call(d3.axisLeft(yscale).ticks(2)); // Create an axis component with d3.axisLeft
+      .call(d3.axisRight(yscale).ticks(2)); // Create an axis component with d3.axisLeft
   }
 
     componentDidMount() {
@@ -124,8 +124,8 @@ class Display extends Component {
 
     return <div className={"number" + (this.props.disabled ? " disabled" : "")}>
       <div className="title">{this.props.text}</div>
-      <div className="value">{latest + units}</div>
-      <Graph data={chartData} height={75} width={300} max={this.props.max} min={this.props.min} />
+      <div className="value"><span>{latest + units}</span></div>
+      <Graph data={chartData} height={75} width={700} max={this.props.max} min={this.props.min} flip={this.props.flip} />
       {/* <LineChart data={chartData} min={this.props.min || 0} max={this.props.max} colors={["#fff", "#fff", "#fff"]} points={false} height="200px"/> */}
     </div>
   }
@@ -166,6 +166,12 @@ class App extends Component {
               />
               <Display
                 data={this.state.data || []}
+                measurement="turbidity"
+                text="Stream turbidity"
+                units="" 
+                disabled={true} />
+              <Display
+                data={this.state.data || []}
                 measurement="temperature"
                 sensor="ds18b20"
                 text="Stream temperature"
@@ -174,17 +180,22 @@ class App extends Component {
                 max={65} />
               <Display
                 data={this.state.data || []}
-                measurement="humidity"
-                text="Atmospheric humidity"
-                units="%" />
-              <Display
-                data={this.state.data || []}
                 measurement="temperature"
                 sensor="bme680"
                 text="Atmospheric temperature"
                 units="C"
                 min={45}
-                max={85}/>
+                max={85} />
+              <Display
+                data={this.state.data || []}
+                measurement="humidity"
+                text="Atmospheric humidity"
+                units="%" />
+              <Display
+                data={this.state.data || []}
+                measurement="gas_resistance"
+                text="Atmospheric volatiles"
+                units="voc" />
               <Display
                 data={this.state.data || []}
                 measurement="pressure"
@@ -198,17 +209,6 @@ class App extends Component {
                 text="Ambient volume"
                 units="%%"
               />
-              <Display
-                data={this.state.data || []}
-                measurement="gas_resistance"
-                text="Atmospheric volatiles"
-                units="voc" />
-              <Display
-                data={this.state.data || []}
-                measurement="turbidity"
-                text="Stream turbidity"
-                units="" 
-                disabled={true} />
             </div>
           </main>
         </div>
