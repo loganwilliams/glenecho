@@ -95,7 +95,7 @@ func DatapointsAtTime(db *sql.DB, day time.Time) ([]*Datapoint, error) {
     }
   }
 
-  rows, err := recentDatapointsStmt.Query(day, day.Add(72*time.Hour))
+  rows, err := recentDatapointsStmt.Query(day, day.Add(24*6*time.Hour))
 
   if err != nil {
     return datapoints, err
