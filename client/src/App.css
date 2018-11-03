@@ -9,6 +9,7 @@ body {
   justify-content: space-around;
   color: #51ffff;
   background-color: black;
+  margin-bottom: 8em;
 }
 
 .time {
@@ -55,4 +56,9 @@ h1 {
 
 .chart {
   margin-left: -35px;
+}
+
+.number.disabled {
+  opacity: 0.5;
+  text-decoration: line-through;
 }

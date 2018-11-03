@@ -92,6 +92,14 @@ class Display extends Component {
       units = "%";
     }
 
+    if (units === "voc") {
+      filteredData = filteredData.map(f => {
+        f.value = Math.round(+f.value / 100);
+        return f;
+      });
+      units = "";
+    }
+
     let displayData = filteredData.map(f => {
       f.value = +f.value.toFixed(2);
       return f;
@@ -107,13 +115,14 @@ class Display extends Component {
       units = "°F"
     }
 
+
     let chartData = filteredData.map(f => {
       let n = [];
       n[0] = new Date(f.timestamp);
       n[1] = f.value;
       return n;})
 
-    return <div className="number">
+    return <div className={"number" + (this.props.disabled ? " disabled" : "")}>
       <div className="title">{this.props.text}</div>
       <div className="value">{latest + units}</div>
       <Graph data={chartData} height={75} width={300} max={this.props.max} min={this.props.min} />
@@ -189,6 +198,17 @@ class App extends Component {
                 text="Ambient volume"
                 units="%%"
               />
+              <Display
+                data={this.state.data || []}
+                measurement="gas_resistance"
+                text="Atmospheric volatiles"
+                units="voc" />
+              <Display
+                data={this.state.data || []}
+                measurement="turbidity"
+                text="Stream turbidity"
+                units="" 
+                disabled={true} />
             </div>
           </main>
         </div>
