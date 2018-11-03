@@ -54,7 +54,7 @@ class Graph extends Component {
       svg.append("g")
         .attr("transform", "translate(0," + (height+8) + ")")
         .attr("cass", "xaxis")
-        .call(d3.axisBottom(xscale).ticks(8));
+        .call(d3.axisBottom(xscale));
     }
   }
 
