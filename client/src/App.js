@@ -30,7 +30,7 @@ class Graph extends Component {
 
     let yscale = d3.scaleLinear()
       .domain([min, max])
-      .range([height - 5, 5]);
+      .range([height - 5, 15]);
 
     let line = d3.line()
       .x(d => xscale(d[0]))
