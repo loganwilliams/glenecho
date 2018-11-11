@@ -22,6 +22,8 @@ class Graph extends Component {
 
     let min = this.props.min || d3.min(data.map(x => x[1]));
     let max = this.props.max || d3.max(data.map(x => x[1]));
+    min -= (max - min) / 10;
+    max += (max - min) / 10;
 
     console.log(this.props.domain);
     let xscale = d3.scaleTime()
