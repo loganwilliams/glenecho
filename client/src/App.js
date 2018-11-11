@@ -135,6 +135,7 @@ class Display extends Component {
       return n;})
 
     return <div className={"number" + (this.props.disabled ? " disabled" : "")}>
+      <div className="blocker"></div>
       <div className="title">{this.props.text}</div>
       <div className="value"><span>{latest + units}</span></div>
       <Graph data={chartData} height={75} width={700} max={this.props.max} min={this.props.min} xaxis={this.props.xaxis} domain={domain}/>
@@ -188,16 +189,14 @@ class App extends Component {
                 sensor="ds18b20"
                 text="Stream temperature"
                 units="C"
-                min={55}
-                max={65} />
+                />
               <Display
                 data={this.state.data || []}
                 measurement="temperature"
                 sensor="bme680"
                 text="Atmospheric temperature"
                 units="C"
-                min={45}
-                max={85} />
+                />
               <Display
                 data={this.state.data || []}
                 measurement="humidity"
@@ -213,8 +212,7 @@ class App extends Component {
                 measurement="pressure"
                 text="Atmospheric pressure"
                 units="mbar"
-                min={1000}
-                max={1030} />
+                />
               <Display
                 data={this.state.data || []}
                 measurement="max_volume"

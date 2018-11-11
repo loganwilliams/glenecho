@@ -12,6 +12,8 @@ body {
   margin-bottom: 8em;
   position: relative;
   padding-top: 1em;
+  /*width: 80%;*/
+  /*max-width: 900px;*/
 }
 
 .time {
@@ -28,8 +30,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding-left: 2em;
+  /*padding-left: 2em;*/
   padding-right: 2em;
+  position: relative;
 }
 
 .latest div:last-child {
@@ -42,9 +45,14 @@ body {
 .title {
   font-size: 18px;
   width: 80px;
-  margin-right: 1em;
+  padding-right: 1em;
   align-self: center;
   text-align: right;
+  padding-bottom: 11px;
+  padding-top: 10px;
+  background-color: black;
+  z-index: 10;
+  padding-left: 2em;
 }
 
 .value {
@@ -68,9 +76,12 @@ body {
 }
 
 .App {
-  width: 900px;
+  max-width: 900px;
+  min-width: 600px;
+  width: 80%;
   margin-left: auto;
   margin-right: auto;
+  overflow: hidden;
 }
 
 h1 {
@@ -99,4 +110,13 @@ h1 {
   align-self: right;
   text-align: right;
   display: block;
+}
+
+.blocker {
+  height: 100%;
+  width: 1em;
+  position: absolute;
+  left: 0px;
+  background-color: black;
+  z-index: 10;
 }
