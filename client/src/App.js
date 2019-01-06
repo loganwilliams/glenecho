@@ -223,6 +223,17 @@ class App extends Component {
                 xaxis={true}
               />
             </div>
+            <div className="critters">
+              <h2>Recent users</h2>
+              <div className="grid">
+                <div className="critterimg">
+                  <img src="/crittercam/IMG_0298.JPG" />
+                </div>
+                <div className="critterimg">
+                  <img src="/crittercam/IMG_0254.JPG" />
+                </div>
+              </div>
+            </div>
           </main>
         </div>
       );
