@@ -206,6 +206,11 @@ class App extends Component {
                 units="%" />
               <Display
                 data={this.state.data || []}
+                measurement="absolute_humidity"
+                text="Absolute humidity"
+                units="g/m3" />
+              <Display
+                data={this.state.data || []}
                 measurement="gas_resistance"
                 text="Atmospheric volatiles"
                 units="voc" />
