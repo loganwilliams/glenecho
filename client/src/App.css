@@ -144,7 +144,7 @@ h1 {
   display: block;
   width: 100%;
   height: auto;
-  filter: brightness(180%);
+  filter: brightness(140%);
   opacity: 1.0;
   margin: 0px;
   mix-blend-mode: multiply;
@@ -162,4 +162,12 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
+}
+
+.grid .domain {
+  display: none;
+}
+
+.grid .tick line {
+  stroke: #990f05 !important;
 }

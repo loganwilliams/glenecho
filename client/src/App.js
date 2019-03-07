@@ -28,7 +28,7 @@ class Graph extends Component {
     console.log(this.props.domain);
     let xscale = d3.scaleTime()
       .domain(this.props.domain)
-      .range([0, width-43]);
+      .range([0, width - 43]);
 
     let yscale = d3.scaleLinear()
       .domain([min, max])
@@ -42,25 +42,42 @@ class Graph extends Component {
     let svg = d3.select(this.node).append("g")
       .attr("transform", "translate(100,0)");
 
+    // gridlines in x axis function
+    function make_x_gridlines() {
+      return d3.axisBottom(xscale)
+        .ticks(10);
+    }
+
+    // add the X gridlines
+    svg.append("g")
+      .attr("class", "grid")
+      .style("stroke", "black")
+      .attr("transform", "translate(0," + height + ")")
+      .call(make_x_gridlines()
+        .tickSize(-height - 50)
+        .tickFormat("")
+      )
+
     svg.append("path")
       .datum(data)
       .attr("class", "line")
-      .attr("d", line);
+      .attr("d", line)
+      .style("fill", "none");
 
     svg.append("g")
-      .attr("transform", "translate(" + (width-35) + ", 0)")
+      .attr("transform", "translate(" + (width - 35) + ", 0)")
       .attr("class", "yaxis")
       .call(d3.axisRight(yscale).ticks(2)); // Create an axis component with d3.axisLeft
 
     if (this.props.xaxis) {
       svg.append("g")
-        .attr("transform", "translate(0," + (height+8) + ")")
+        .attr("transform", "translate(0," + (height + 8) + ")")
         .attr("cass", "xaxis")
         .call(d3.axisBottom(xscale));
     }
   }
 
-    componentDidMount() {
+  componentDidMount() {
     this.drawChart();
   }
 
@@ -71,10 +88,6 @@ class Graph extends Component {
 
 
 class Display extends Component {
-  
-
-
-
   render() {
     let filteredData = this.props.data.filter(f => {
       if (this.props.sensor) {
@@ -91,8 +104,10 @@ class Display extends Component {
 
 
     if (units === "C") {
+      filteredData = filteredData.filter(f => f.value < 50);
+
       filteredData = filteredData.map(f => {
-        f.value = +f.value*9/5 + 32;
+        f.value = +f.value * 9 / 5 + 32;
         return f;
       });
       units = "F";
@@ -108,10 +123,14 @@ class Display extends Component {
 
     if (units === "voc") {
       filteredData = filteredData.map(f => {
-        f.value = Math.round(+f.value / 100);
+        f.value = 5 - Math.log10(Math.round(+f.value / 100));
         return f;
       });
       units = "";
+    }
+
+    if (units === "in") {
+      filteredData = filteredData.map(f => ({ ...f, value: 2.5 * (f.value - 8.47) }))
     }
 
     let displayData = filteredData.map(f => {
@@ -129,18 +148,18 @@ class Display extends Component {
       units = "°F"
     }
 
-
     let chartData = filteredData.map(f => {
       let n = [];
       n[0] = new Date(f.timestamp);
       n[1] = f.value;
-      return n;})
+      return n;
+    })
 
     return <div className={"number" + (this.props.disabled ? " disabled" : "")}>
       <div className="blocker"></div>
       <div className="title">{this.props.text}</div>
       <div className="value"><span>{latest + units}</span></div>
-      <Graph data={chartData} height={75} width={700} max={this.props.max} min={this.props.min} xaxis={this.props.xaxis} domain={domain}/>
+      <Graph data={chartData} height={75} width={700} max={this.props.max} min={this.props.min} xaxis={this.props.xaxis} domain={domain} />
       {/* <LineChart data={chartData} min={this.props.min || 0} max={this.props.max} colors={["#fff", "#fff", "#fff"]} points={false} height="200px"/> */}
     </div>
   }
@@ -155,7 +174,7 @@ class App extends Component {
     fetch('http://glenecho.stream:8080/list').then(r => r.json()).then(data => {
       console.log(data);
       data = data.filter(f => +f.value > 0);
-      this.setState({data});
+      this.setState({ data });
     })
   }
 
@@ -181,24 +200,18 @@ class App extends Component {
               />
               <Display
                 data={this.state.data || []}
-                measurement="turbidity"
-                text="Stream turbidity"
-                units="" 
-                disabled={true} />
-              <Display
-                data={this.state.data || []}
                 measurement="temperature"
                 sensor="ds18b20"
                 text="Stream temperature"
                 units="C"
-                />
+              />
               <Display
                 data={this.state.data || []}
                 measurement="temperature"
                 sensor="bme680"
                 text="Atmospheric temperature"
                 units="C"
-                />
+              />
               <Display
                 data={this.state.data || []}
                 measurement="humidity"
@@ -219,7 +232,7 @@ class App extends Component {
                 measurement="pressure"
                 text="Atmospheric pressure"
                 units="mbar"
-                />
+              />
               <Display
                 data={this.state.data || []}
                 measurement="max_volume"
@@ -231,6 +244,12 @@ class App extends Component {
             <div className="critters">
               <h2>Recent users</h2>
               <div className="grid">
+                <div className="critterimg">
+                  <img src="/crittercam/2019-03-06-01.jpg" />
+                </div>
+                <div className="critterimg">
+                  <img src="/crittercam/2019-03-06-02.jpg" />
+                </div>
                 <div className="critterimg">
                   <img src="/crittercam/IMG_0298.JPG" />
                 </div>
