@@ -1,0 +1,558 @@
+<html>
+  <head>
+    <script src="https://unpkg.com/intersection-observer@0.5.1/intersection-observer.js"></script>
+    <script src="https://unpkg.com/scrollama"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
+    <link rel="stylesheet" href="./viz.css" />
+
+    <style>
+      html {
+        height: 100%;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+      }
+
+      body {
+        height: 100%;
+        /* width: 100%; */
+
+        font-size: 18px;
+        background-color: white;
+        color: black;
+        transition: 0.5s;
+        padding: 0;
+        margin: 0;
+      }
+
+      #vizcontainer {
+        position: fixed;
+        bottom: 1em;
+        left: 0px;
+        width: 100%;
+        /* background: linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0),
+          rgba(255, 255, 255, 1) 25%
+        ); */
+        display: flex;
+        justify-content: flex-start;
+        z-index: 10;
+        align-items: bottom;
+        overflow: hidden;
+        transition: 0.5s bottom;
+      }
+
+      #viz {
+        transform: scale(0.8);
+        height: calc(0.8 * 450px);
+        position: relative;
+      }
+
+      #text {
+        width: 100%;
+        right: 0em;
+        top: 0em;
+        padding-top: 25%;
+      }
+
+      #image {
+        position: fixed;
+        top: 1em;
+        left: 1em;
+        width: calc(60% - 1em);
+        height: 100%;
+        max-height: calc(100% - 2em - 0.8 * 450px);
+        pointer-events: none;
+      }
+
+      #image img,
+      #image video {
+        /* width: 100%; */
+        max-width: 100%;
+        height: 100%;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        z-index: 0;
+      }
+
+      .block {
+        height: 70%;
+      }
+
+      p {
+        max-width: 400px;
+        margin-left: calc(60% + 2em);
+        margin-right: 1em;
+      }
+
+      .credit {
+        font-style: italic;
+        text-align: center;
+      }
+
+      .block.end {
+        height: 100vh;
+        background-color: black;
+      }
+
+      #videomatrix {
+        width: 100%;
+        z-index: 10;
+        /* position: fixed;
+        top: 100%;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        z-index: 10;
+        opacity: 0.2; */
+      }
+
+      svg {
+        transform: scale(1);
+        max-width: 900px;
+        max-height: 500px;
+        transition: 0.5s;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- <div id="videomatrix"></div> -->
+
+    <div id="vizcontainer">
+      <div id="viz">
+        <svg width="900" height="450"></svg>
+        <div id="date">
+          <div class="row date"><div class="datevalue"></div></div>
+          <div class="row air">
+            <div class="airt value"></div>
+            <div class="airh value"></div>
+            <div class="airv value"></div>
+          </div>
+          <div class="row water">
+            <div class="watert value"></div>
+            <div class="waterd value"></div>
+            <div class="wateru value"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="image">
+      <img id="imageimg" />
+    </div>
+    <div id="text">
+      <div class="block" step-data="shifting-baseline">
+        <p>
+          "Shifting baseline syndrome is perpetuated when each new generation
+          perceives the environmental conditions in which they grew up as
+          ‘normal’. It also describes how people’s standards for acceptable
+          environmental conditions are steadily declining. This phenomenon is
+          not limited to climatic conditions, but also wildlife populations,
+          water bodies, and entire ecosystems."
+        </p>
+      </div>
+      <div class="block" step-data="earth-breathing">
+        <p>This is one year of the Earth.</p>
+      </div>
+      <div class="block" step-data="california-breathing">
+        <p>This is one year of California.</p>
+      </div>
+      <div class="block" step-data="wetland-loss">
+        <p>
+          Imagine 100. Imagine watching the changes that now we can only read
+          about manifest at landscape-scale. Imagine watching the yearly
+          exhalation of Sierra-fed wetlands cease.
+        </p>
+      </div>
+      <div class="block" step-data-type="viz" step-data="anywhere">
+        <p>
+          The research on the “shifting baseline” problem is surprisingly young
+          — two oft-cited papers at the forefront of describing the issue were
+          published in 1995.
+        </p>
+        <p>
+          The papers also suggest ways to fix the baseline in place:
+          observation, measurement, and communication.
+        </p>
+      </div>
+      <div class="block">
+        <p>
+          I built a water-monitoring station for Glen Echo Creek, the samll
+          urban stream flowing beside my house.
+        </p>
+        <p>
+          There it sat, a depth sensing strip hanging a few centimeters in the
+          water like a citizen scientist's toe, while I tried to decide why and
+          what it meant.
+        </p>
+        <p>
+          The visualization accompanying this text shows several months of water
+          and atmospheric observations, recorded with intermittent consistency
+          and accuracy.
+        </p>
+      </div>
+      <div
+        class="block"
+        step-data="grizzly"
+        step-credit="Photo by Laura Cunningham"
+      >
+        <p>
+          I wish I could explain how it feels to read Muir, listen to the Sierra
+          stories of my uncle, or even read a BackpackingLite forum post from
+          2006. It's a shameful kind of jealousy and sadness and anger. Knowing
+          that these experiences of isolation, wildlife, and discovery are gone
+          now.
+        </p>
+        <p>
+          To know that ducks over the Central Valley could blot out the sky at
+          sunset; to hear that birds have lost 30% of their population; that
+          parking lots were meadows not 100 years ago but 40 years ago; to
+          imagine bears roaming the grasslands off that sick joke, Grizzly Peak.
+        </p>
+      </div>
+      <div class="block" step-data="seasons">
+        <p>
+          I wish I could justify the misplaced frustration I feel when someone
+          says "there are no seasons here."
+        </p>
+      </div>
+      <div class="block" step-data="measuring">
+        <p>
+          In the face of shifting baselines, the act of measuring becomes an act
+          of resistance.
+        </p>
+      </div>
+      <div class="block" step-data="block-diagram">
+        <p>
+          When all you have is a hammer, everything looks like a nail.
+        </p>
+      </div>
+      <div class="block" step-data="flood">
+        <p>
+          Of course I managed to under-estimate the strength of the creek.
+        </p>
+      </div>
+      <div class="block" step-data="map">
+        <p>
+          On the hardscape of urban Oakland, rainstorms drain too quickly.
+        </p>
+      </div>
+      <div class="block" step-data="floodbroken">
+        <p>
+          One morning, woken by the a pattering as ferocious as any I've heard
+          and grimacing against a horizontal deluge, I spotted the sensor
+          downstream dangling from a CAT5 cable.
+        </p>
+      </div>
+
+      <div class="block" step-data="historic-map">
+        <p>
+          It wasn't always this way of course. And to a great degree, that was
+          <em>why</em> I was doing this &mdash; the possibility of connecting to
+          something greater than me in space and time.
+        </p>
+      </div>
+      <div class="block" step-data="otter" step-data-type="video">
+        <p>
+          The rains brought some welcome and unexpected moments among the chaos.
+          A river otter began to frequent the creek, spending several months
+          intermittently appearing in the night &mdash; perhaps using the creek
+          as a corridor between Lake Temescal and the bay.
+        </p>
+      </div>
+      <!-- something should go here, maybe another photograph? -->
+      <div class="block">
+        <p>
+          The creek isn't wild, but it's close enough to be something different.
+        </p>
+      </div>
+      <div class="block" step-data="road">
+        <p>
+          To claim this echo is the sound itself, this mangled distorted and
+          subdued attempt at replication? It is a travesty, a misrepresentation
+          so severe that it stretches the bounds of good intentions.
+        </p>
+      </div>
+      <!-- this is where it should go to the sensor breaking -->
+      <div class="block">
+        <p>
+          In the end, it was neither nearly being washed away, nor the flooding
+          from tupperware's predictable vincibility to the drumbeat persistance
+          of an atmospheric river that ended the sensor.
+        </p>
+      </div>
+      <div class="block" step-data="earth-churn">
+        <p>
+          Instead, it stopped after the slow, year-scale churning of plants
+          upward, leaves downward, algae outward, that slow cycling of the
+          entire ground of our existence, choked its sensors and its solar
+          panel.
+        </p>
+      </div>
+      <div class="block" step-data="sunfish" step-data-type="video">
+        <p>
+          As I write this, the creek is languid. Oily films stretch across it,
+          and the pile of trash under the bridge keeps growing. The shallow
+          light no longers shines through the trees at the right angle to
+          illuminate the
+          <a href="https://www.inaturalist.org/observations/29664665"
+            >sculpin</a
+          >
+          and
+          <a href="https://www.inaturalist.org/observations/29664402"
+            >sunfish</a
+          >
+          beneath the surface.
+        </p>
+      </div>
+      <div class="block" step-data="autumn">
+        <p>
+          As I write this, our dry November continues. This is the most
+          difficult, uncertain, and dramatic time in California, a hundred
+          thousand acres of predictable earthquakes. All the annuals but the
+          nichest natives are gone, every perennial's taproot stretched deep as
+          possible, all but the last leaf dropped in a desperate attempt to make
+          it to that first drop of rainfall. And when the rain does fall, these
+          dry terrible sticks somehow sprout leaves anew.
+        </p>
+      </div>
+      <div class="block" step-data="raccoon" step-data-type="video">
+        <p>
+          Animals can't do that.
+        </p>
+        <p>We can't do that.</p>
+        <p>I'm not sure how people don't notice this.</p>
+      </div>
+
+      <!-- the videomatrix should be a CSS grid of some kind that INCLUDES the viz!
+      the entire grid can shift up when it needs to rise to be in the center.
+      then the videos can just fade in on the final scroll. -->
+      <div class="block end" step-end="true"><div id="videomatrix"></div></div>
+    </div>
+
+    <script src="./viz.js"></script>
+    <script>
+      const images = {
+        "shifting-baseline": "./images/glenecho-loop.gif",
+        "california-breathing": "./images/california_air_loop_big.gif",
+        "earth-breathing": "./images/earth-breathing.gif",
+        measuring: "./images/measure.jpg",
+        seasons: "./images/towhee_asmr+sm.gif",
+        flood: "./images/DSCF0001.jpg",
+        floodbroken: "./images/IMG_8975.jpg",
+        "block-diagram": "./images/diagram.png",
+        map: "./images/map.png",
+        road: "./images/DSCF2548.JPG",
+        "historic-map": "./images/historic-map.jpg",
+        autumn: "./images/DSCF8611.jpg",
+        raccoon: "./images/IMG_0053.mov",
+        sunfish: "./images/sunfish_sm.mov",
+        otter: "./images/otter_3-31.mov",
+        "wetland-loss": "./images/wetland_loss.png",
+        grizzly: "./images/grizzly.jpeg",
+        "earth-churn": "./images/earth-churn.gif"
+      };
+
+      let start = 0;
+      let autoAdvance;
+      let pos;
+      window.addEventListener("scroll", function(e) {
+        if (row_data.length == 0 || start == 0) {
+          start = Math.random() * row_data.length;
+          return;
+        }
+
+        pos = Math.round(
+          (window.scrollY * 0.5 + start) % Math.max(1, row_data.length - 72)
+        );
+
+        if (pos < 0) pos = 0;
+
+        subdata = row_data.slice(pos, pos + 72);
+        updateData(subdata);
+
+        d3.select("svg")
+          .select("g")
+          .attr("transform", "translate(200, 200) rotate(" + pos * 4.8 + ")");
+
+        let d = subdata[71];
+        updateDisplay(d);
+      });
+
+      // instantiate the scrollama
+      const scroller = scrollama();
+
+      // setup the instance, pass callback functions
+      scroller
+        .setup({
+          step: ".block",
+          offset: 0.6
+        })
+        .onStepEnter(response => {
+          console.log(response);
+          let key = response.element.getAttribute("step-data");
+          if (response.element.getAttribute("step-end")) {
+            // d3.select("body")
+            //   .style("background-color", "black")
+            //   .style("color", "white");
+
+            let width = window.innerWidth;
+            let height = window.innerHeight;
+
+            let ratio = width / height;
+
+            let size = "25%";
+            let hide = 4;
+
+            if (ratio <= 1.9) {
+              size = "33.3333333%";
+              hide = 6;
+            } else if (ratio <= 1.3) {
+              size = "50%;";
+              hide = 6;
+            }
+
+            let vs = [];
+            for (let i = 0; i < 9; i++) {
+              vs.push(i);
+            }
+
+            let vm = d3.select("#videomatrix");
+
+            let videos = vm
+              .selectAll("div")
+              .data(vs)
+              .enter()
+              .append("div")
+
+              .style("width", size)
+              .style("height", "auto")
+              .append("video")
+              .style("width", "100%")
+              .style("height", "auto")
+              .attr("id", d => "video" + d)
+              .style("opacity", (d, i) => (i === hide ? 0.0 : 1.0))
+              .property("muted", true)
+              .property("autoplay", true)
+              .property("playsinline", true)
+              .on("ended", d => {
+                console.log("ended");
+                let el = d3.select("#video" + d);
+
+                el.select("source").attr(
+                  "src",
+                  "./mp4s/" + Math.floor(Math.random() * 499) + ".mp4"
+                );
+
+                el.node().load();
+                el.node().play();
+              });
+
+            videos
+              .append("source")
+              .attr("src", d => "./mp4s/" + d + ".mp4")
+              .attr("type", "video/mp4");
+
+            d3.select("#image").style("display", "none");
+
+            d3.select("svg")
+              .style("background-color", "#ccc")
+              .style("max-width", "400px")
+              .style("max-height", "400px")
+              .style("border-radius", "200px")
+              .style("transform", "scale(0.8)");
+
+            d3.select("#viz")
+              .style("top", "1em")
+              .style("left", "-1em");
+
+            autoAdvance = window.setInterval(() => {
+              pos += 1;
+
+              if (pos + 72 > row_data.length) {
+                pos = 0;
+              }
+
+              subdata = row_data.slice(pos, pos + 72);
+              updateData(subdata);
+
+              d3.select("svg")
+                .select("g")
+                .attr(
+                  "transform",
+                  "translate(200, 200) rotate(" + pos * 4.8 + ")"
+                );
+            }, 50);
+          }
+
+          if (key) {
+            d3.select("#image")
+              .style("display", "block")
+              .selectAll("*")
+              .remove();
+
+            if (response.element.getAttribute("step-data-type") === "video") {
+              d3.select("#image")
+                .append("video")
+                .property("autoplay", true)
+                .property("muted", true)
+                .append("source")
+                .attr("src", images[key])
+                .attr("type", "video/mp4");
+
+              d3.select("#vizcontainer").style("bottom", "1em");
+            } else if (
+              response.element.getAttribute("step-data-type") === "viz"
+            ) {
+              d3.select("#vizcontainer").style("bottom", "calc(50% - 180px)");
+            } else {
+              d3.select("#image")
+                .append("img")
+                .attr("src", images[key]);
+              d3.select("#vizcontainer").style("bottom", "1em");
+            }
+
+            if (response.element.getAttribute("step-credit")) {
+              d3.select("#image")
+                .append("div")
+                .attr("class", "credit")
+                .html(response.element.getAttribute("step-credit"));
+            }
+          } else {
+            d3.select("#image").style("display", "none");
+          }
+          // { element, index, direction }
+        })
+        .onStepExit(response => {
+          // { element, index, direction }
+          if (response.element.getAttribute("step-end")) {
+            d3.select("body")
+              .style("background-color", "white")
+              .style("color", "black");
+
+            d3.select("#videomatrix")
+              .selectAll("*")
+              .remove();
+
+            d3.select("svg")
+              .style("background-color", null)
+              .style("max-width", null)
+              .style("max-height", null)
+              .style("border-radius", null)
+              .style("transform", null);
+
+            d3.select("#viz")
+              .style("top", null)
+              .style("left", null);
+
+            window.clearInterval(autoAdvance);
+          }
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8" />
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+  <style>
+    body {
+      background-color: white;
+    }
+  </style>
+  <link rel="stylesheet" href="./viz.css" />
+</head>
+
+<body>
+  <svg width="800" height="800"></svg>
+  <div id="date">
+    <div class="row date"><div class="datevalue"></div></div>
+    <div class="row air">
+      <div class="airt value"></div>
+      <div class="airh value"></div>
+      <div class="airv value"></div>
+    </div>
+    <div class="row water">
+      <div class="watert value"></div>
+      <div class="waterd value"></div>
+      <div class="wateru value"></div>
+    </div>
+  </div>
+  <script src="viz.js"></script>
+  <script>
+    let start = 0;
+
+    window.setInterval(() => {
+      start += 1;
+      start = start % row_data.length;
+      subdata = row_data.slice(start, start + 72);
+      updateData(subdata);
+
+      d3.select("svg")
+        .select("g")
+        .attr("transform", "translate(200, 200) rotate(" + start * 4.8 + ")");
+
+      if (start % 5 === 0) {
+        let d = subdata[0];
+        updateDisplay(d);
+      }
+    }, 40);
+  </script>
+</body>
